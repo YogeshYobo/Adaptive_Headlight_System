@@ -179,25 +179,24 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
 
 //Configuring PWM of LED
 void set_beam_pwm(beam_t beam, uint16_t pwm){
-    if (beam == HIGH_BEAM)
-    {
-        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pwm);
-        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-    }
-    else if (beam == LOW_BEAM)
-    {
-        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, LOW_BEAM_PWM);
-    }
-    else if(beam == BOTH_BEAM){
-    	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pwm);
-    	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, pwm);
-    }
-    else
-    {
-        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
-        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
-    }
+	switch(beam){
+		case HIGH_BEAM:
+	        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pwm);
+	        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+	        break;
+		case LOW_BEAM:
+	        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+	        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, LOW_BEAM_PWM);
+	        break;
+		case BOTH_BEAM:
+	    	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pwm);
+	    	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, pwm);
+	    	break;
+		default:
+	        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+	        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+	    	break;
+	}
 }
 
 //Data Processing Logic
@@ -224,10 +223,10 @@ void process_sensors(void)
         	}
 
     	//else if(lux < 100 && lux >= 60 && CCT >= 4000 && CCT <= 8000) {	//testing
-    	else if(lux < 60 && lux >= 30 && CCT<=12000 && CCT>=8000){	//rainy
+    	else if(lux < 70 && lux >= 30 && CCT<=12000 && CCT>=8000){	//rainy
     	if (moisture >=3000)
     			system_state = STATE_RAINY_FOG_SMOKE;
-    		else
+    	else
     			system_state = STATE_CLOUDY;
         	}
     	//else if(lux < 100 && lux >= 65 && CCT >= 4000 && CCT <= 8000) { //testing
